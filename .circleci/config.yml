@@ -7,11 +7,8 @@ jobs:
         RAILS_ENV: test
     - image: circleci/mysql:5.7-ram
       environment:
-        MYSQL_DATABASE: circleci-example-for-rails_test
         MYSQL_ALLOW_EMPTY_PASSWORD: true
-        MYSQL_ROOT_HOST: '%'
-        MYSQL_USER: root
-    working_directory: ~/qiita_clone
+    working_directory: ~/circleci-example-for-rails
     steps:
     - checkout
     - restore_cache:
@@ -27,6 +24,10 @@ jobs:
         paths:
         - ./vendor/bundle
         key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+    - run:
+        command: rm ./config/database.yml
+    - run:
+        command: mv ./config/database.yml.ci ./config/database.yml
     # Database setup
     - run:
         name: Prepare db
