@@ -8,10 +8,6 @@ jobs:
     - image: circleci/mysql:5.7-ram
       environment:
         MYSQL_ALLOW_EMPTY_PASSWORD: true
-        MYSQL_USER: root
-        MYSQL_DATABASE: circleci-example-for-rails_test
-        MYSQL_ROOT_HOST: "%"
-        MYSQL_PORT: 3306
     working_directory: ~/circleci-example-for-rails
     steps:
     - checkout
@@ -35,12 +31,17 @@ jobs:
          dockerize -wait \
          tcp://127.0.0.1:3306 -timeout 120s
 
+    - run:
+        command: rm ./config/database.yml
+
+    - run:
+        command: mv ./config/database.yml.ci ./config/database.yml
+
     # Database setup
     - run:
         name: Prepare db
         command: |
           bin/rails db:create db:migrate
-
     # run tests!
     - run:
         name: Run rspec
